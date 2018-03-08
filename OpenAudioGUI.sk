@@ -1,0 +1,498 @@
+on script load:
+	set {_Prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+	if {_Prefix} is not set:
+		wf "## OpenAudioGUI by Legoman99573. Config by XanderWander." to "plugins/OpenAudioGUI/config.yml"
+		wf "## " to "plugins/OpenAudioGUI/config.yml"
+		wf "## Name of songs must match each other or the plugin will act up." to "plugins/OpenAudioGUI/config.yml"
+		wf "## " to "plugins/OpenAudioGUI/config.yml"
+		wf "## Example of what it should look like and must be in same order" to "plugins/OpenAudioGUI/config.yml"
+		wf "## OpenAudioGUI:" to "plugins/OpenAudioGUI/config.yml"
+		wf "##   Prefix: §8[§9§lOpenAudioGUI§8]§r" to "plugins/OpenAudioGUI/config.yml"
+		wf "##   Songs:" to "plugins/OpenAudioGUI/config.yml"
+		wf "##   - Example Song 1" to "plugins/OpenAudioGUI/config.yml"
+		wf "##   - Example Song 2" to "plugins/OpenAudioGUI/config.yml"
+		wf "##   Example Song 1:" to "plugins/OpenAudioGUI/config.yml"
+		wf "##     URL: link/to/song1.mp3" to "plugins/OpenAudioGUI/config.yml"
+		wf "##     Artist: Song Artist 1" to "plugins/OpenAudioGUI/config.yml"
+		wf "##   Example Song 2:" to "plugins/OpenAudioGUI/config.yml"
+		wf "##     URL: link/to/song2.mp3" to "plugins/OpenAudioGUI/config.yml"
+		wf "##     Artist: Song Artist 2" to "plugins/OpenAudioGUI/config.yml"
+		wf "## " to "plugins/OpenAudioGUI/config.yml"
+		wf "## Set Updater false if you dont want to use the Updater Feature" to "plugins/OpenAudioGUI/config.yml"
+		wf "## " to "plugins/OpenAudioGUI/config.yml"
+		wf "## Do not Config Version as this will reset your configuration." to "plugins/OpenAudioGUI/config.yml"
+		wf "## " to "plugins/OpenAudioGUI/config.yml"
+		set yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml" to "&8[&9&lOpenAudioGUI&8]&r"
+	set {_Songs::*} to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
+	set {_Size} to size of {_Songs::*}
+	if {_Size} is 0:
+		add "MTC" to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
+		set yaml value "OpenAudioGUI.MTC.URL" from file "plugins/OpenAudioGUI/config.yml" to "https://www.youtube.com/watch♫v=-zHm77FkW3U"
+		set yaml value "OpenAudioGUI.MTC.Artist" from file "plugins/OpenAudioGUI/config.yml" to "S3RL"
+		add "Song-of-Spaghets" to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
+		set yaml value "OpenAudioGUI.Song-of-Spaghets.URL" from file "plugins/OpenAudioGUI/config.yml" to "https://www.youtube.com/watch♫v=xGEcwBytP3Q"
+		set yaml value "OpenAudioGUI.Song-of-Spaghets.Artist" from file "plugins/OpenAudioGUI/config.yml" to "TwinkieMan"
+	wait 3 ticks
+	set {_update} to yaml value "Config.Updater" from file "plugins/OpenAudioGUI/config.yml"
+	if {_update} is not set:
+		set yaml value "Config.Updater" from file "plugins/OpenAudioGUI/config.yml" to "true"
+	wait 3 ticks
+	set {_loop} to yaml value "Config.loop" from file "plugins/OpenAudioGUI/config.yml"
+	if {_update} is not set:
+		set yaml value "Config.loop" from file "plugins/OpenAudioGUI/config.yml" to "false"
+	wait 3 seconds
+	set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+	send "%{_prefix}% &aLoading OpenAudioGUI Skript by &6Legoman99573&2. Config by &6XanderWander&2." to console
+	wait 5 seconds
+	set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+	send "%{_prefix}% &aEnabled :D" to console
+
+on script unload:
+	set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+	send "%{_prefix}% &cDisabled OpenAudioGUI Skript by &6Legoman99573&c. Config by &6XanderWander&c." to console
+
+on join:
+	delete {OpenAudio.%player's uuid%.connected.true}
+	delete {OpenAdio.%player's uuid%.hue.set}
+	delete {OpenAdio.%player's uuid%.hue}
+	delete {OpenAdio.%player's uuid%.audio.reconnect.set}
+	delete {OpenAdio.%player's uuid%.hue.id.set}
+	delete {OpenAdio.%player's uuid%.hue.id}
+	delete {oamenu.%player's uuid%.song}
+	delete {oamenu.%player's uuid%.toggle.resume}
+	delete {oamenu.%player's uuid%.URL}
+	delete {oamenu.%player's uuid%.menu}
+	delete {oamenu.%player's uuid%.Artist}
+	delete {oamenu.%player's uuid%.nextarrow}
+	delete {oamenu.%player's uuid%.hue.connected}
+	set {_update} to yaml value "Config.Updater" from file "plugins/OpenAudioGUI/config.yml"
+	if {_update} is equal to "true":
+		if player has permission "oagui.admin":
+			set {_ver} to text from url "https://thegearmc.xyz/plugins/OpenAudioGUI.txt"
+			set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+			send "%{_prefix}% &aChecking for an Update..." to player
+			wait 1 second
+			if {_ver} is not set:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cUnable to check for updates. Check &6https://www.spigotmc.org/resources/openaudiogui.37801/ &cto see if there is an update." to player
+			else:
+				if {_ver} isn't "4.0":
+					set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+					send "%{_prefix}% &cYou are using an outdated version of OpenAudioGUI." to player
+					send "%{_prefix}% &cYou can get the latest release from &6https://www.spigotmc.org/resources/openaudiogui.37801/" to player
+				else:
+					set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+					send "%{_prefix}% &aYou are using an up-to-date version of OpenAudioGUI." to player
+
+	
+on inventory close:
+	if {oamenu.%player's uuid%.menu} is set:
+		delete {oamenu.%player's uuid%.menu}
+	
+
+command /oamenu [<text>] [<text>] [<text>] [<text>]:
+	trigger:
+		if arg 1 isn't set:
+			wait 3 ticks
+			set {oamenu.%player's uuid%.menu} to "true"
+			open chest with 3 rows named "&6&l♫ OpenAudioMC Menu ♫" to player
+			wait 1 tick
+			set slot 4 of player's current inventory to green stained glass pane named "&aHue Settings"
+			if player has permission "oamenu.admin":
+				set slot 18 of player's current inventory to gold_ingot named "&aAdmin"
+			if {oamenu.%player's uuid%.song} is set:
+				set slot 22 of player's current inventory to green stained glass pane named "&aStop playing" with lore "&6%{oamenu.%player's uuid%.song}%"
+			else:
+				set slot 22 of player's current inventory to yellow stained glass pane named "&aStop a Song"
+			set slot 12 of player's current inventory to green stained glass pane named "&aPlay a Song"
+			set slot 13 of player's current inventory to blue stained glass pane named "&aRequest Web Session"
+			set slot 14 of player's current inventory to green stained glass pane named "&aChange Volume"
+				
+		if arg 1 is equal to "reset":
+			if player has permission "oamenu.admin":
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &aResetting configuration"
+				wait 3 ticks
+				df "plugins/OpenAudioGUI/config.yml"
+				wait 3 ticks
+				console command "skript reload %script%"
+			else:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cYou are Lacking the Permission oagui.admin"
+				
+		if arg 1 is equal to "admin":
+			wait 1 tick
+			if player has permission "oamenu.admin":
+				open chest with 1 rows named "&6&l♫ OpenAudioMC Admin Menu ♫" to player
+				set slot 3 of player's current inventory to command_block named "&aReload OpenAudioGUI"
+				set slot 4 of player's current inventory to structure_void named "&aClose"
+				set slot 5 of player's current inventory to sign named "&aReset Config"
+			else:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cYou are Lacking the Permission oagui.admin"
+			
+		if arg 1 is equal to "hue":
+			wait 1 tick
+			if player has permission "oagui.hue":
+				if arg 2 is not set:
+					open chest with 1 rows named "&6&l♫ OpenAudioMC Hue ♫" to player
+					set slot 4 of player's current inventory to green stained glass pane named "&aSet Philips Hue Lights"
+				if arg 2 is "setLightColor":
+					set {OpenAdio.%player's uuid%.hue.set} to true
+					set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+					send "%{_prefix}% &aSet the hue color (Cannot contain letters or spaces and must have rgba(1,2,3,4) to work):"
+					stop
+			else:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cYou are Lacking the Permission oagui.hue"
+				
+		if arg 1 is equal to "volume":
+			wait 1 tick
+			if player has permission "oagui.volume":
+				open chest with 2 rows named "&6&l♫ OpenAudioMC Volume ♫" to player
+				set slot 0 of player's current inventory to barrier named "&aMute"
+				set slot 2 of player's current inventory to green stained glass pane named "&a10"
+				set slot 3 of player's current inventory to green stained glass pane named "&a20"
+				set slot 4 of player's current inventory to green stained glass pane named "&a30"
+				set slot 5 of player's current inventory to green stained glass pane named "&a40"
+				set slot 6 of player's current inventory to green stained glass pane named "&a50"
+				set slot 11 of player's current inventory to green stained glass pane named "&a60"
+				set slot 12 of player's current inventory to green stained glass pane named "&a70"
+				set slot 13 of player's current inventory to yellow stained glass pane named "&a80"
+				set slot 14 of player's current inventory to yellow stained glass pane named "&a90"
+				set slot 15 of player's current inventory to red stained glass pane named "&a100"
+			else:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cYou are Lacking the Permission oagui.volume"
+					
+		if arg 1 is equal to "stop":	
+			if player has permission "oagui.play":
+				console command "openaudio stop %player%"
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				message "%{_prefix}% &aYou have stopped the last audio that was playing." to player
+				make player execute command "/oamenu"
+			else:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cYou are Lacking the Permission oagui.play"
+					
+		if arg 1 is equal to "reload":
+			if player has permission "oagui.admin":
+				wait 1 ticks
+				console command "skript reload %script%"
+				wait 10 ticks
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				message "%{_prefix}% &aReloaded"
+			else:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cYou are Lacking the Permission oagui.admin"
+		
+		if arg 1 is equal to "update":
+			if player has permission "oagui.admin":
+				set {_ver} to text from url "https://thegearmc.xyz/plugins/OpenAudioGUI.txt"
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &aChecking for an Update..." to player
+				wait 1 second
+				if {_ver} is not set:
+					set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+					send "%{_prefix}% &cUnable to check for updates. Check &6https://www.spigotmc.org/resources/openaudiogui.37801/ &cto see if there is an update." to player
+				else:
+					if {_ver} isn't "4.0":
+						set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+						send "%{_prefix}% &cYou are using an outdated version of OpenAudioGUI." to player
+						send "%{_prefix}% &cYou can get the latest release from &6https://www.spigotmc.org/resources/openaudiogui.37801/" to player
+					else:
+						set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+						send "%{_prefix}% &aYou are using an up-to-date version of OpenAudioGUI." to player
+			else:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cYou are Lacking the Permission oagui.admin" to player
+					
+		if arg 1 is equal to "play":
+			wait 1 tick
+			if player has permission "oagui.play":
+				if arg 2 is not set:
+					set {_Songs::*} to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
+					set {_Size} to size of {_Songs::*}
+					open chest with 6 rows named "&4&l♫ OpenAudio Music List ♫" to player
+					set {_} to -1
+					loop {_Songs::*}:
+						{_} is not 53
+						add 1 to {_}
+						if {_} is greater than 52:
+							delete {oamenu.%player's uuid%.nextarrow}
+							set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&eClick to play %loop-value%"
+							set slot 53 of player's current inventory to arrow named "&a&lNext Page" with lore "&7Click to go to the next page"
+							remove "%loop-value%" from {_Songs::*}
+							set {PlayerSongs.OpenedMenu.%player's uuid%::*} to {_Songs::*}
+							set {oamenu.%player's uuid%.nextarrow} to true
+							stop
+						else:
+							delete {oamenu.%player's uuid%.nextarrow}
+							set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&eClick to play %loop-value%"
+							remove "%loop-value%" from {_Songs::*}
+				else:
+					set {_Songs::*} to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
+					loop {_Songs::*}:
+						if loop-value is "%arg 2%":
+							if {oamenu.%player's uuid%.URL} is set:
+								set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+								send "%{_prefix}% [ERROR] &c%player%'s url is currently set to %{oamenu.%player's uuid%.URL}%. This may cause the player not to hear the right song." to console
+								if player has permission "oagui.admin":
+									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+									send "%{_prefix}% [ERROR] &c%player%'s url is currently set to %{oamenu.%player's uuid%.URL}%. This may cause the player not to hear the right song." to console
+							delete {oamenu.%player's uuid%.song}
+							wait 3 ticks
+							set {oamenu.%player's uuid%.song} to "%loop-value%"
+							set {oamenu.%player's uuid%.URL} to yaml value "OpenAudioGUI.%loop-value%.URL" from file "plugins/OpenAudioGUI/config.yml"
+							wait 3 ticks
+							if {oamenu.%player's uuid%.URL} is set:
+								set {_loop} to yaml value "Config.loop" from file "plugins/OpenAudioGUI/config.yml"
+								if {_loop} is equal to "true":
+									console command "oa play %player% %{oamenu.%player's uuid%.URL}% {id:OpenAudioGUI,loop:true}"
+								else:
+									console command "oa play %player% %{oamenu.%player's uuid%.URL}% {id:OpenAudioGUI,loop:false}"
+								delete {oamenu.%player's uuid%.URL}
+								set {oamenu.%player's uuid%.Artist} to yaml value "OpenAudioGUI.%loop-value%.Artist" from file "plugins/OpenAudioGUI/config.yml"
+								if {oamenu.%player's uuid%.Artist} is set:
+									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+									send "%{_prefix}% &aPlaying the song &6%loop-value% &aby &6%{oamenu.%player's uuid%.Artist}%"
+								else:
+									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+									send "%{_prefix}% &aPlaying the song &6%loop-value% &aby &6Unknown Artist"
+								delete {oamenu.%player's uuid%.Artist}
+								make player execute command "/oamenu"
+							else:
+								if player has permission "oagui.admin":
+									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+									send "%{_prefix}% &cURL is missing in %loop-value%. Check your configuration."
+								else:
+									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+									send "%{_prefix}% &cFailed to load song %loop-value%. Please contact your administrator about this error."
+								delete {oamenu.%player's uuid%.song}
+								wait 3 ticks
+								make player execute command "/oamenu"
+			else:
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cSeems Terminator came from the future to terminate the song. I would check your yaml settings, generate a new one, or contact the author of the plugin (Legoman99573)." to player
+				
+
+on inventory click:
+	set {_Name} to inventory name of player's current inventory
+	if {_Name} is equal to "&6&l♫ OpenAudioMC Menu ♫":
+		if player has permission "oamenu.admin":
+			if clicked slot is 18:
+				close player's inventory
+				wait 1 tick
+				make player execute command "/oamenu admin"
+			if clicked slot is 13:
+				close player's inventory
+				wait 1 tick
+				make player execute command "/audio"
+		if clicked slot is 22:
+			close player's inventory
+			wait 3 ticks
+			make player execute command "/oamenu stop"
+			delete {oamenu.%player's uuid%.song}
+			delete {oamenu.%player's uuid%.toggle.resume}
+			make player execute command "/oamenu"
+		if clicked slot is 12:
+			close player's inventory
+			wait 3 ticks
+			make player execute command "/oamenu play"
+		if clicked slot is 14:
+			close player's inventory
+			wait 3 ticks
+			make player execute command "/oamenu volume"
+		if clicked slot is 4:
+			close player's inventory
+			wait 3 ticks
+			make player execute command "/oamenu hue"
+					
+	if {_Name} is equal to "&4&l♫ OpenAudio Music List ♫":
+		set {_Songs::*} to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
+		set {_} to -1
+		if {oamenu.%player's uuid%.nextarrow} is set:
+			if clicked slot is 53:
+				close player's inventory
+				wait 1 tick
+				open chest with 6 rows named "&4&l♫ OpenAudio Music List ♫" to player
+				set {_} to -1
+				loop {PlayerSongs.OpenedMenu.%player's uuid%::*}:
+					delete {oamenu.%player's uuid%.nextarrow}
+					{_} is not 53
+					if {_} is 52:
+						set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&eClick to play %loop-value%"
+						set slot 53 of player's current inventory to arrow named "&a&lNext Page" with lore "&7Click to go to the next page"
+						remove "%loop-value%" from {PlayerSongs.OpenedMenu.%player's uuid%::*}
+						set {oamenu.%player's uuid%.nextarrow} to true
+						stop
+					add 1 to {_}
+					set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&eClick to play %loop-value%"
+					remove "%loop-value%" from {PlayerSongs.OpenedMenu.%player's uuid%::*}
+				delete {PlayerSongs.OpenedMenu.%player's uuid%::*}
+			else:
+				loop {_Songs::*}:
+					set {_Name} to name of clicked item
+					if {_Name} is equal to "&c&l%loop-value%":
+						cancel event
+						close player's inventory
+						make player execute command "/oamenu play %loop-value%"
+						stop
+		else:
+			loop {_Songs::*}:
+				set {_Name} to name of clicked item
+				if {_Name} is equal to "&c&l%loop-value%":
+					cancel event
+					close player's inventory
+					make player execute command "/oamenu play %loop-value%"
+					stop
+	if {_Name} is equal to "&6&l♫ OpenAudioMC Admin Menu ♫":
+		if clicked slot is 3:
+			close player's inventory
+			wait 1 tick
+			make player execute command "/oamenu reload"
+		if clicked slot is 4:
+			close player's inventory
+		if clicked slot is 5:
+			close player's inventory
+			wait 1 tick
+			make player execute command "/oamenu reset"
+		else:
+			cancel event
+			close player's inventory
+	if {_Name} is equal to "&6&l♫ OpenAudioMC Hue ♫":
+		if clicked slot is 4:
+			close player's inventory
+			wait 1 tick
+			make player execute command "/oamenu hue setLightColor"
+		else:
+			cancel event
+			close player's inventory
+	if {_Name} is equal to "&6&l♫ OpenAudioMC Volume ♫":
+		if click slot is 0:
+			close player's inventory
+			make player execute command "/volume 0"
+		if click slot is 2:
+			close player's inventory
+			make player execute command "/volume 10"
+		if click slot is 3:
+			close player's inventory
+			make player execute command "/volume 20"
+		if click slot is 4:
+			close player's inventory
+			make player execute command "/volume 30"
+		if click slot is 5:
+			close player's inventory
+			make player execute command "/volume 40"
+		if click slot is 6:
+			close player's inventory
+			make player execute command "/volume 50"
+		if click slot is 11:
+			close player's inventory
+			make player execute command "/volume 60"
+		if click slot is 12:
+			close player's inventory
+			make player execute command "/volume 70"
+		if click slot is 13:
+			close player's inventory
+			make player execute command "/volume 80"
+		if click slot is 14:
+			close player's inventory
+			make player execute command "/volume 90"
+		if click slot is 15:
+			close player's inventory
+			make player execute command "/volume 100"
+		else:
+			cancel event
+			close player's inventory
+
+on chat:
+	if {OpenAdio.%player's uuid%.hue.set} is set:
+		if player has permission "oagui.hue":
+			if message does not contain "a" or "b" or "c" or "d" or "e" or "f" or "g" or "h" or "i" or "j" or "k" or "l" or "m" or "n" or "o" or "p" or "q" or "r" or "s" or "t" or "u" or "v" or "w" or "x" or "y" or "z":
+				cancel event
+				replace all "&0" with "" in message
+				replace all "&1" with "" in message
+				replace all "&2" with "" in message
+				replace all "&3" with "" in message
+				replace all "&4" with "" in message
+				replace all "&5" with "" in message
+				replace all "&6" with "" in message
+				replace all "&7" with "" in message
+				replace all "&8" with "" in message
+				replace all "&9" with "" in message
+				replace all "&a" with "" in message
+				replace all "&b" with "" in message
+				replace all "&c" with "" in message
+				replace all "&d" with "" in message
+				replace all "&e" with "" in message
+				replace all "&f" with "" in message
+				replace all "&k" with "" in message
+				replace all "&l" with "" in message
+				replace all "&m" with "" in message
+				replace all "&n" with "" in message
+				replace all "&o" with "" in message
+				replace all " " with "" in message
+				set {OpenAdio.%player's uuid%.hue} to message
+				delete {OpenAdio.%player's uuid%.hue.set}
+				replace all "," with " " in message
+				console command "oa hue %player% %{OpenAdio.%player's uuid%.hue}%"
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &aPhilips Hue color set to &brgba(%{OpenAdio.%player's uuid%.hue}%)" to player
+				delete {OpenAdio.%player's uuid%.hue}
+				stop
+			else:
+				cancel event
+				delete {OpenAdio.%player's uuid%.hue.set}
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &crgba() color codes do not contain letters." to player
+				cancel event
+				stop
+		else:
+			cancel event
+			delete {OpenAdio.%player's uuid%.hue.set}
+
+on chat:
+	if {OpenAdio.%player's uuid%.hue.id.set} is set:
+		if player has permission "oagui.hue":
+			if message does not contain "a" or "b" or "c" or "d" or "e" or "f" or "g" or "h" or "i" or "j" or "k" or "l" or "m" or "n" or "o" or "p" or "q" or "r" or "s" or "t" or "u" or "v" or "w" or "x" or "y" or "z":
+				cancel event
+				replace all "&0" with "" in message
+				replace all "&1" with "" in message
+				replace all "&2" with "" in message
+				replace all "&3" with "" in message
+				replace all "&4" with "" in message
+				replace all "&5" with "" in message
+				replace all "&6" with "" in message
+				replace all "&7" with "" in message
+				replace all "&8" with "" in message
+				replace all "&9" with "" in message
+				replace all "&a" with "" in message
+				replace all "&b" with "" in message
+				replace all "&c" with "" in message
+				replace all "&d" with "" in message
+				replace all "&e" with "" in message
+				replace all "&f" with "" in message
+				replace all "&k" with "" in message
+				replace all "&l" with "" in message
+				replace all "&m" with "" in message
+				replace all "&n" with "" in message
+				replace all "&o" with "" in message
+				replace all " " with "" in message
+				set {OpenAdio.%player's uuid%.hue.id} to message
+				delete {OpenAdio.%player's uuid%.hue.id.set}
+				console command "openaudio hue set %player% rgba(%{OpenAdio.%player's uuid%.hue}%) %{OpenAdio.%player's uuid%.hue.id}%"
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &aPhilips Hue color: rgba(%{OpenAdio.%player's uuid%.hue}%)" to player
+				delete {OpenAdio.%player's uuid%.hue}
+				stop
+			else:
+				cancel event
+				delete {OpenAdio.%player's uuid%.hue.id.set}
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &cID cannot contain a letter." to player
+				cancel event
+				stop
+		else:
+			cancel event
+			delete {OpenAdio.%player's uuid%.hue.set}

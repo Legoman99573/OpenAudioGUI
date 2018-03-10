@@ -76,7 +76,7 @@ on join:
 				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
 				send "%{_prefix}% &cUnable to check for updates. Check &6https://www.spigotmc.org/resources/openaudiogui.37801/ &cto see if there is an update." to player
 			else:
-				if {_ver} isn't "4.0":
+				if {_ver} isn't "4.1":
 					set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
 					send "%{_prefix}% &cYou are using an outdated version of OpenAudioGUI." to player
 					send "%{_prefix}% &cYou can get the latest release from &6https://www.spigotmc.org/resources/openaudiogui.37801/" to player
@@ -231,7 +231,7 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 					set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
 					send "%{_prefix}% &cUnable to check for updates. Check &6https://www.spigotmc.org/resources/openaudiogui.37801/ &cto see if there is an update." to player
 				else:
-					if {_ver} isn't "4.0":
+					if {_ver} isn't "4.1":
 						set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
 						send "%{_prefix}% &cYou are using an outdated version of OpenAudioGUI." to player
 						send "%{_prefix}% &cYou can get the latest release from &6https://www.spigotmc.org/resources/openaudiogui.37801/" to player

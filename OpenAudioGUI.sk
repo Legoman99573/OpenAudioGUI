@@ -142,9 +142,11 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 							set {_songurl} to arg 4
 							replace all "." with "" in {_songname}
 							replace all "." with "" in {_artistname}
+							replace all "-" with " " in {_artistname}
 							add "%{_songname}%" to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
 							set yaml value "OpenAudioGUI.%{_songname}%.URL" from file "plugins/OpenAudioGUI/config.yml" to "%{_songurl}%"
 							set yaml value "OpenAudioGUI.%{_songname}%.Artist" from file "plugins/OpenAudioGUI/config.yml" to "%{_artistname}%"
+							replace all "-" with " " in {_songname}
 							set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
 							send "%{_prefix}% &aSuccessfully added song:"
 							send "%{_prefix}% &aSong Name: &b%{_songname}%"
@@ -288,12 +290,14 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 									console command "oa play %player% %{oamenu.%player's uuid%.URL}% {id:OpenAudioGUI,loop:false}"
 								delete {oamenu.%player's uuid%.URL}
 								set {oamenu.%player's uuid%.Artist} to yaml value "OpenAudioGUI.%loop-value%.Artist" from file "plugins/OpenAudioGUI/config.yml"
+								set {_songnamedashcheck} to loop-value
+								replace all "-" with " " in {_songnamedashcheck}
 								if {oamenu.%player's uuid%.Artist} is set:
 									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
-									send "%{_prefix}% &aPlaying the song &6%loop-value% &aby &6%{oamenu.%player's uuid%.Artist}%"
+									send "%{_prefix}% &aPlaying the song &6%{_songnamedashcheck}% &aby &6%{oamenu.%player's uuid%.Artist}%"
 								else:
 									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
-									send "%{_prefix}% &aPlaying the song &6%loop-value% &aby &6Unknown Artist"
+									send "%{_prefix}% &aPlaying the song &6%{_songnamedashcheck}% &aby &6Unknown Artist"
 								delete {oamenu.%player's uuid%.Artist}
 								make player execute command "/oamenu"
 							else:

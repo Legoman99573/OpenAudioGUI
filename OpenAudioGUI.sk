@@ -38,8 +38,12 @@ on script load:
 		set yaml value "Config.Updater" from file "plugins/OpenAudioGUI/config.yml" to "true"
 	wait 3 ticks
 	set {_loop} to yaml value "Config.loop" from file "plugins/OpenAudioGUI/config.yml"
-	if {_update} is not set:
+	if {_loop} is not set:
 		set yaml value "Config.loop" from file "plugins/OpenAudioGUI/config.yml" to "false"
+	wait 3 ticks
+	set {_keepPlaying} to yaml value "Config.KeepPlayingOnNewSongSelect" from file "plugins/OpenAudioGUI/config.yml"
+	if {_keepPlaying} is not set:
+		set yaml value "Config.KeepPlayingOnNewSongSelect" from file "plugins/OpenAudioGUI/config.yml" to "false"
 	wait 3 seconds
 	set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
 	send "%{_prefix}% &aLoading OpenAudioGUI Skript by &6Legoman99573&2. Config by &6XanderWander&2." to console
@@ -115,7 +119,58 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 				wait 3 ticks
 				df "plugins/OpenAudioGUI/config.yml"
 				wait 3 ticks
-				console command "skript reload %script%"
+				
+				# ------------------------- #
+				# Config Regeneration Start #
+				# ------------------------- #
+				wf "## OpenAudioGUI by Legoman99573. Config by XanderWander." to "plugins/OpenAudioGUI/config.yml"
+				wf "## " to "plugins/OpenAudioGUI/config.yml"
+				wf "## Name of songs must match each other or the plugin will act up." to "plugins/OpenAudioGUI/config.yml"
+				wf "## " to "plugins/OpenAudioGUI/config.yml"
+				wf "## Example of what it should look like and must be in same order" to "plugins/OpenAudioGUI/config.yml"
+				wf "## OpenAudioGUI:" to "plugins/OpenAudioGUI/config.yml"
+				wf "##   Prefix: §8[§9§lOpenAudioGUI§8]§r" to "plugins/OpenAudioGUI/config.yml"
+				wf "##   Songs:" to "plugins/OpenAudioGUI/config.yml"
+				wf "##   - Example Song 1" to "plugins/OpenAudioGUI/config.yml"
+				wf "##   - Example Song 2" to "plugins/OpenAudioGUI/config.yml"
+				wf "##   Example Song 1:" to "plugins/OpenAudioGUI/config.yml"
+				wf "##     URL: link/to/song1.mp3" to "plugins/OpenAudioGUI/config.yml"
+				wf "##     Artist: Song Artist 1" to "plugins/OpenAudioGUI/config.yml"
+				wf "##   Example Song 2:" to "plugins/OpenAudioGUI/config.yml"
+				wf "##     URL: link/to/song2.mp3" to "plugins/OpenAudioGUI/config.yml"
+				wf "##     Artist: Song Artist 2" to "plugins/OpenAudioGUI/config.yml"
+				wf "## " to "plugins/OpenAudioGUI/config.yml"
+				wf "## Set Updater false if you dont want to use the Updater Feature" to "plugins/OpenAudioGUI/config.yml"
+				wf "## " to "plugins/OpenAudioGUI/config.yml"
+				wf "## Do not Config Version as this will reset your configuration." to "plugins/OpenAudioGUI/config.yml"
+				wf "## " to "plugins/OpenAudioGUI/config.yml"
+				set yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml" to "&8[&9&lOpenAudioGUI&8]&r"
+				
+				# ----------------------- #
+				# Song Regeneration Start #
+				# ----------------------- #
+				add "MTC" to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
+				set yaml value "OpenAudioGUI.MTC.URL" from file "plugins/OpenAudioGUI/config.yml" to "https://www.youtube.com/watch?v=-zHm77FkW3U"
+				set yaml value "OpenAudioGUI.MTC.Artist" from file "plugins/OpenAudioGUI/config.yml" to "S3RL"
+				add "Song-of-Spaghets" to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
+				set yaml value "OpenAudioGUI.Song-of-Spaghets.URL" from file "plugins/OpenAudioGUI/config.yml" to "https://www.youtube.com/watch?v=xGEcwBytP3Q"
+				set yaml value "OpenAudioGUI.Song-of-Spaghets.Artist" from file "plugins/OpenAudioGUI/config.yml" to "TwinkieMan"
+				
+				# --------------------- #
+				# Song Regeneration End #
+				# --------------------- #
+				
+				set yaml value "Config.Updater" from file "plugins/OpenAudioGUI/config.yml" to "true"
+				set yaml value "Config.loop" from file "plugins/OpenAudioGUI/config.yml" to "false"
+				set yaml value "Config.KeepPlayingOnNewSongSelect" from file "plugins/OpenAudioGUI/config.yml" to "false"
+				
+				# ----------------------- #
+				# Config Regeneration End #
+				# ----------------------- #
+				
+				wait 3 ticks
+				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
+				send "%{_prefix}% &aConfiguration Reset"
 			else:
 				set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
 				send "%{_prefix}% &cYou are Lacking the Permission oagui.admin"
@@ -257,7 +312,8 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 						add 1 to {_}
 						if {_} is greater than 52:
 							delete {oamenu.%player's uuid%.nextarrow}
-							set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&eClick to play %loop-value%"
+							set {_artistName} to yaml value "OpenAudioGUI.%loop-value%.Artist" from file "plugins/OpenAudioGUI/config.yml"
+							set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&ePlay &a%loop-value% &eby &a%{_artistName}%"
 							set slot 53 of player's current inventory to arrow named "&a&lNext Page" with lore "&7Click to go to the next page"
 							remove "%loop-value%" from {_Songs::*}
 							set {PlayerSongs.OpenedMenu.%player's uuid%::*} to {_Songs::*}
@@ -265,7 +321,8 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 							stop
 						else:
 							delete {oamenu.%player's uuid%.nextarrow}
-							set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&eClick to play %loop-value%"
+							set {_artistName} to yaml value "OpenAudioGUI.%loop-value%.Artist" from file "plugins/OpenAudioGUI/config.yml"
+							set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&ePlay &a%loop-value% &eby &a%{_artistName}%"
 							remove "%loop-value%" from {_Songs::*}
 				else:
 					set {_Songs::*} to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
@@ -283,6 +340,10 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 							set {oamenu.%player's uuid%.URL} to yaml value "OpenAudioGUI.%loop-value%.URL" from file "plugins/OpenAudioGUI/config.yml"
 							wait 3 ticks
 							if {oamenu.%player's uuid%.URL} is set:
+								set {_keepPlaying} to yaml value "Config.KeepPlayingOnNewSongSelect" from file "plugins/OpenAudioGUI/config.yml"
+								if {_keepPlaying} is equal to "false":
+									console command "oa stop %player% OpenAudioGUI"
+								wait 3 ticks
 								set {_loop} to yaml value "Config.loop" from file "plugins/OpenAudioGUI/config.yml"
 								if {_loop} is equal to "true":
 									console command "oa play %player% %{oamenu.%player's uuid%.URL}% {id:OpenAudioGUI,loop:true}"
@@ -294,10 +355,10 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 								replace all "-" with " " in {_songnamedashcheck}
 								if {oamenu.%player's uuid%.Artist} is set:
 									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
-									send "%{_prefix}% &aPlaying the song &6%{_songnamedashcheck}% &aby &6%{oamenu.%player's uuid%.Artist}%"
+									send "%{_prefix}% &aNow Playing: &6%{_songnamedashcheck}% &aby &6%{oamenu.%player's uuid%.Artist}%"
 								else:
 									set {_prefix} to yaml value "OpenAudioGUI.Prefix" from file "plugins/OpenAudioGUI/config.yml"
-									send "%{_prefix}% &aPlaying the song &6%{_songnamedashcheck}% &aby &6Unknown Artist"
+									send "%{_prefix}% &aNow Playing: &6%{_songnamedashcheck}% &aby &6Unknown Artist"
 								delete {oamenu.%player's uuid%.Artist}
 								make player execute command "/oamenu"
 							else:
@@ -360,13 +421,15 @@ on inventory click:
 					delete {oamenu.%player's uuid%.nextarrow}
 					{_} is not 53
 					if {_} is 52:
-						set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&eClick to play %loop-value%"
+						set {_artistName} to yaml value "OpenAudioGUI.%loop-value%.Artist" from file "plugins/OpenAudioGUI/config.yml"
+						set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&ePlay &a%loop-value% &eby &a%{_artistName}%"
 						set slot 53 of player's current inventory to arrow named "&a&lNext Page" with lore "&7Click to go to the next page"
 						remove "%loop-value%" from {PlayerSongs.OpenedMenu.%player's uuid%::*}
 						set {oamenu.%player's uuid%.nextarrow} to true
 						stop
 					add 1 to {_}
-					set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&eClick to play %loop-value%"
+					set {_artistName} to yaml value "OpenAudioGUI.%loop-value%.Artist" from file "plugins/OpenAudioGUI/config.yml"
+					set slot {_} of player's current inventory to jukebox named "&c&l%loop-value%" with lore "&ePlay &a%loop-value% &eby &a%{_artistName}%"
 					remove "%loop-value%" from {PlayerSongs.OpenedMenu.%player's uuid%::*}
 				delete {PlayerSongs.OpenedMenu.%player's uuid%::*}
 			else:

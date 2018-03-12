@@ -192,12 +192,18 @@ command /oamenu [<text>] [<text>] [<text>] [<text>]:
 				if arg 2 is set:
 					if arg 3 is set:
 						if arg 4 is set:
+							# -------------------------------------------------------------------------------------------------- #
+							# Due to a bug in wildskript, we replace some things so it will look right on output of this command #
+							# -------------------------------------------------------------------------------------------------- #
 							set {_songname} to arg 2
 							set {_artistname} to arg 3
 							set {_songurl} to arg 4
 							replace all "." with "" in {_songname}
 							replace all "." with "" in {_artistname}
 							replace all "-" with " " in {_artistname}
+							# --------------------------- #
+							# Now we generate the rest :) #
+							# --------------------------- #
 							add "%{_songname}%" to yaml list "OpenAudioGUI.Songs" from file "plugins/OpenAudioGUI/config.yml"
 							set yaml value "OpenAudioGUI.%{_songname}%.URL" from file "plugins/OpenAudioGUI/config.yml" to "%{_songurl}%"
 							set yaml value "OpenAudioGUI.%{_songname}%.Artist" from file "plugins/OpenAudioGUI/config.yml" to "%{_artistname}%"
